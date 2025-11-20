@@ -1,0 +1,108 @@
+<div class="space-y-6">
+  
+  <!-- Welcome Section -->
+  <div class="flex items-center justify-between animate-fade-in">
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900">Welcome back, {{ currentUser()?.name?.split(' ')?.[0] }}! 👋</h1>
+      <p class="text-slate-500">Here's what's happening with your research projects today.</p>
+    </div>
+    <div class="flex gap-3">
+      <button class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+        <lucide-icon [img]="FileTextIcon" class="w-4 h-4"></lucide-icon>
+        <span>Reports</span>
+      </button>
+      <button class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+        <lucide-icon [img]="PlusIcon" class="w-4 h-4"></lucide-icon>
+        <span>New Project</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Bento Grid -->
+  <div class="bento-grid">
+    
+    <!-- Metrics Cards -->
+    <app-bento-card size="small">
+      <app-metrics-card 
+        title="Total Projects" 
+        [value]="metrics()?.totalProjects || 0" 
+        [icon]="FolderIcon"
+        color="indigo"
+        trend="up"
+        trendValue="12%">
+      </app-metrics-card>
+    </app-bento-card>
+
+    <app-bento-card size="small">
+      <app-metrics-card 
+        title="Active Research" 
+        [value]="metrics()?.activeProjects || 0" 
+        [icon]="ClockIcon"
+        color="cyan"
+        trend="neutral">
+      </app-metrics-card>
+    </app-bento-card>
+
+    <app-bento-card size="small">
+      <app-metrics-card 
+        title="Completed" 
+        [value]="metrics()?.completedProjects || 0" 
+        [icon]="CheckCircleIcon"
+        color="green"
+        trend="up"
+        trendValue="5%">
+      </app-metrics-card>
+    </app-bento-card>
+
+    <app-bento-card size="small">
+      <app-metrics-card 
+        title="Pending Reviews" 
+        [value]="metrics()?.projectsByStatus?.['IN_REVIEW'] || 0" 
+        [icon]="FileTextIcon"
+        color="violet"
+        trend="down"
+        trendValue="2">
+      </app-metrics-card>
+    </app-bento-card>
+
+    <!-- Status Chart -->
+    <app-bento-card size="wide" variant="default">
+      <div class="h-full flex flex-col">
+        <h3 class="font-semibold text-slate-800 mb-4">Project Status Distribution</h3>
+        <div class="flex-1 min-h-0">
+          <app-status-chart [data]="metrics()?.projectsByStatus"></app-status-chart>
+        </div>
+      </div>
+    </app-bento-card>
+
+    <!-- Activity Timeline -->
+    <app-bento-card size="tall">
+      <div class="h-full flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-slate-800">Recent Activity</h3>
+          <button class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">View All</button>
+        </div>
+        <div class="flex-1 overflow-y-auto pr-2 -mr-2">
+          <app-activity-timeline [activities]="recentActivity()"></app-activity-timeline>
+        </div>
+      </div>
+    </app-bento-card>
+
+    <!-- Quick Actions / Promo -->
+    <app-bento-card size="medium" variant="gradient">
+      <div class="h-full flex flex-col justify-between p-2">
+        <div>
+          <div class="w-10 h-10 bg-white/50 rounded-lg flex items-center justify-center mb-3 backdrop-blur-sm">
+            <lucide-icon [img]="PlusIcon" class="w-5 h-5 text-indigo-600"></lucide-icon>
+          </div>
+          <h3 class="font-semibold text-slate-900">Start New Research</h3>
+          <p class="text-sm text-slate-600 mt-1">Launch a new project and invite your team members.</p>
+        </div>
+        <button class="w-full mt-4 py-2 bg-white text-indigo-600 font-medium rounded-lg hover:bg-white/80 transition-colors text-sm">
+          Create Project
+        </button>
+      </div>
+    </app-bento-card>
+
+  </div>
+</div>
