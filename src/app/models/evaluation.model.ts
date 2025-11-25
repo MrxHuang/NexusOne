@@ -15,6 +15,7 @@ export interface Evaluation {
   id: string;
   projectId: string;
   evaluatorId: string;
+  evaluator: { id: string; name: string; email: string }; // Simplified User object or full User
   scores: EvaluationScore[];
   overallComment: string;
   recommendation: 'APPROVE' | 'REJECT' | 'REVISE';

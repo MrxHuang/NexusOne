@@ -1,45 +1,33 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, delay } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Evaluation, EvaluationResult } from '../models/evaluation.model';
-import { MockDataService } from './mock-data.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EvaluationService {
-  private mockData = inject(MockDataService);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/evaluations`;
 
   getEvaluationsByProject(projectId: string): Observable<Evaluation[]> {
-    return of(this.mockData.getEvaluations().filter(e => e.projectId === projectId)).pipe(delay(500));
+    return this.http.get<Evaluation[]>(`${this.apiUrl}/project/${projectId}`);
   }
 
-  getMyEvaluations(evaluatorId: string): Observable<Evaluation[]> {
-    return of(this.mockData.getEvaluations().filter(e => e.evaluatorId === evaluatorId)).pipe(delay(500));
+  getMyEvaluations(): Observable<Evaluation[]> {
+    return this.http.get<Evaluation[]>(`${this.apiUrl}/my`);
+  }
+
+  getAllEvaluations(): Observable<Evaluation[]> {
+    return this.http.get<Evaluation[]>(this.apiUrl);
   }
 
   submitEvaluation(evaluation: Evaluation): Observable<Evaluation> {
-    return of({ ...evaluation, submittedAt: new Date(), status: 'COMPLETED' as const }).pipe(delay(1000));
+    return this.http.post<Evaluation>(this.apiUrl, evaluation);
   }
 
   getEvaluationResults(projectId: string): Observable<EvaluationResult> {
-    // Mock aggregation logic
-    const result: EvaluationResult = {
-      projectId,
-      averageScore: 8.5,
-      criteriaAverages: {
-        'innovation': 9,
-        'methodology': 8,
-        'feasibility': 7.5,
-        'impact': 9,
-        'team': 9
-      },
-      evaluatorCount: 3,
-      recommendations: {
-        approve: 2,
-        reject: 0,
-        revise: 1
-      }
-    };
-    return of(result).pipe(delay(800));
+    return this.http.get<EvaluationResult>(`${this.apiUrl}/results/${projectId}`);
   }
 }

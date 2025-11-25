@@ -1,5 +1,4 @@
 <div class="space-y-6">
-  
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
     <div>
@@ -9,7 +8,9 @@
   </div>
 
   <!-- Content -->
-  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in">
+  <div
+    class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in"
+  >
     <div class="overflow-x-auto">
       <table class="w-full text-left text-sm">
         <thead class="bg-slate-50 border-b border-slate-200">
@@ -28,7 +29,12 @@
               <div class="text-xs text-slate-500 mt-0.5">Assigned to you</div>
             </td>
             <td class="px-6 py-4">
-              <span [ngClass]="['inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border', getStatusColor(evaluation.status)]">
+              <span
+                [ngClass]="[
+                  'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border',
+                  getStatusColor(evaluation.status)
+                ]"
+              >
                 {{ evaluation.status }}
               </span>
             </td>
@@ -36,19 +42,27 @@
               {{ formatDate(evaluation.submittedAt) }}
             </td>
             <td class="px-6 py-4">
-              <span class="font-medium" [ngClass]="{
-                'text-green-600': evaluation.recommendation === 'APPROVE',
-                'text-red-600': evaluation.recommendation === 'REJECT',
-                'text-orange-600': evaluation.recommendation === 'REVISE'
-              }">
+              <span
+                class="font-medium"
+                [ngClass]="{
+                  'text-green-600': evaluation.recommendation === 'APPROVE',
+                  'text-red-600': evaluation.recommendation === 'REJECT',
+                  'text-orange-600': evaluation.recommendation === 'REVISE'
+                }"
+              >
                 {{ evaluation.recommendation }}
               </span>
             </td>
             <td class="px-6 py-4 text-right">
-              <button class="text-indigo-600 hover:text-indigo-700 font-medium text-sm">View Details</button>
+              <button
+                (click)="viewDetails(evaluation)"
+                class="text-indigo-600 hover:text-indigo-700 font-medium text-sm"
+              >
+                View Details
+              </button>
             </td>
           </tr>
-          
+
           <tr *ngIf="evaluations().length === 0 && !loading()">
             <td colspan="5" class="px-6 py-12 text-center text-slate-500">
               <div class="flex flex-col items-center justify-center">

@@ -1,59 +1,136 @@
-# Nexusone
+# NexusOne Research Project Management Platform
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+## Backend Setup
 
-## Development server
+### Prerequisites
 
-To start a local development server, run:
+- Java 21
+- Maven
+- MySQL 8.0+
+
+### Database Setup
+
+1. Create MySQL database:
+
+```sql
+CREATE DATABASE nexusone_db;
+```
+
+2. Update `backend/src/main/resources/application.properties` with your MySQL credentials:
+
+```properties
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD
+```
+
+### Running the Backend
+
+1. Navigate to backend directory:
+
+```bash
+cd backend
+```
+
+2. Run with Maven:
+
+```bash
+./mvnw spring-boot:run
+```
+
+Or on Windows:
+
+```bash
+mvnw.cmd spring-boot:run
+```
+
+The backend will start on `http://localhost:8080`
+
+### API Endpoints
+
+#### Authentication
+
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login
+- `GET /api/auth/me` - Get current user
+
+#### Projects
+
+- `GET /api/projects` - Get all projects
+- `POST /api/projects` - Create project
+- `GET /api/projects/{id}` - Get project by ID
+- `PUT /api/projects/{id}` - Update project
+- `DELETE /api/projects/{id}` - Delete project
+- `POST /api/projects/{id}/researchers` - Assign researcher
+- `GET /api/projects/{id}/versions` - Get version history
+
+#### Evaluations
+
+- `POST /api/evaluations` - Submit evaluation
+- `GET /api/evaluations/project/{projectId}` - Get project evaluations
+- `GET /api/evaluations/my` - Get my evaluations
+- `GET /api/evaluations/results/{projectId}` - Get evaluation results
+
+#### Dashboard
+
+- `GET /api/dashboard/metrics` - Get dashboard metrics
+- `GET /api/dashboard/activity` - Get recent activity
+- `GET /api/dashboard/stats` - Get personal statistics
+
+#### Reports
+
+- `GET /api/reports/project/{projectId}` - Download project PDF
+- `GET /api/reports/evaluation/{projectId}` - Download evaluation PDF
+
+## Frontend Setup
+
+### Running the Frontend
+
+The Angular frontend is already configured to connect to the backend.
+
+1. Make sure the backend is running on port 8080
+
+2. Start the Angular dev server (already running):
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+The frontend will be available at `http://localhost:4200`
 
-## Code scaffolding
+### Features Implemented
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+✅ JWT Authentication with role-based access
+✅ Project CRUD operations
+✅ Researcher assignment to projects
+✅ Project version history tracking
+✅ Peer evaluation system
+✅ Dashboard with metrics and statistics
+✅ PDF report generation
+✅ Activity audit logging
+✅ Caffeine caching for performance
 
-```bash
-ng generate component component-name
-```
+### Default Users
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+After starting the backend, you can register new users with the following roles:
 
-```bash
-ng generate --help
-```
+- RESEARCHER
+- EVALUATOR
+- ADMIN
 
-## Building
+### Technology Stack
 
-To build the project run:
+**Backend:**
 
-```bash
-ng build
-```
+- Spring Boot 3.2.0
+- Spring Security with JWT
+- Spring Data JPA
+- MySQL
+- Caffeine Cache
+- iText PDF
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+**Frontend:**
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Angular 19
+- TypeScript
+- RxJS
+- Standalone Components

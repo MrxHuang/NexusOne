@@ -56,7 +56,7 @@ import { LucideAngularModule, LayoutDashboard, FolderKanban, FileText, Users, Se
       <div class="p-4 border-t border-slate-800 relative z-10">
         <div class="flex items-center gap-3">
           <div class="relative">
-            <img [src]="currentUser()?.avatar" alt="User" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700">
+            <img [src]="getAvatarUrl(currentUser()?.name || 'User')" alt="User" class="w-10 h-10 rounded-full bg-slate-800 border border-slate-700">
             <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-[#0f172a] rounded-full"></div>
           </div>
           <div *ngIf="!isCollapsed()" class="flex-1 min-w-0 animate-fade-in">
@@ -107,5 +107,9 @@ export class SidebarComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  getAvatarUrl(seed: string): string {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(seed)}`;
   }
 }

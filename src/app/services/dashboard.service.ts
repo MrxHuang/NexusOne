@@ -1,42 +1,39 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, delay, map } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { ProjectMetrics, Activity, PersonalStats } from '../models/dashboard.model';
-import { MockDataService } from './mock-data.service';
-import { ProjectStatus } from '../models/project.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-  private mockData = inject(MockDataService);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/dashboard`;
 
+  // Role-specific dashboard methods
+  getAdminDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin`);
+  }
+
+  getEvaluatorDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/evaluator`);
+  }
+
+  getResearcherDashboard(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/researcher`);
+  }
+
+  // Legacy methods for backward compatibility
   getMetrics(): Observable<ProjectMetrics> {
-    const projects = this.mockData.getProjects();
-    
-    const metrics: ProjectMetrics = {
-      totalProjects: projects.length,
-      activeProjects: projects.filter(p => p.status === ProjectStatus.ACTIVE).length,
-      completedProjects: projects.filter(p => p.status === ProjectStatus.COMPLETED).length,
-      projectsByStatus: {
-        [ProjectStatus.ACTIVE]: projects.filter(p => p.status === ProjectStatus.ACTIVE).length,
-        [ProjectStatus.DRAFT]: projects.filter(p => p.status === ProjectStatus.DRAFT).length,
-        [ProjectStatus.IN_REVIEW]: projects.filter(p => p.status === ProjectStatus.IN_REVIEW).length,
-        [ProjectStatus.COMPLETED]: projects.filter(p => p.status === ProjectStatus.COMPLETED).length,
-      }
-    };
-    
-    return of(metrics).pipe(delay(600));
+    return this.http.get<ProjectMetrics>(`${this.apiUrl}/metrics`);
   }
 
   getRecentActivity(): Observable<Activity[]> {
-    return of(this.mockData.getActivities()).pipe(delay(400));
+    return this.http.get<Activity[]>(`${this.apiUrl}/activity`);
   }
 
-  getPersonalStats(userId: string): Observable<PersonalStats> {
-    return of({
-      projectsInvolved: 3,
-      evaluationsCompleted: 5,
-      averageEvaluationScore: 8.2
-    }).pipe(delay(500));
+  getPersonalStats(): Observable<PersonalStats> {
+    return this.http.get<PersonalStats>(`${this.apiUrl}/stats`);
   }
 }

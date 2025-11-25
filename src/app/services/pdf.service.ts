@@ -1,48 +1,29 @@
-import { Injectable } from '@angular/core';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { Project } from '../models/project.model';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PdfService {
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/reports`;
 
-  constructor() { }
+  generateProjectReport(projectId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/project/${projectId}`, { responseType: 'blob' });
+  }
 
-  async generateProjectReport(project: Project, elementId: string): Promise<void> {
-    const element = document.getElementById(elementId);
-    if (!element) return;
+  generateEvaluationReport(projectId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/evaluation/${projectId}`, { responseType: 'blob' });
+  }
 
-    try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        logging: false,
-        useCORS: true
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`project-report-${project.id}.pdf`);
-    } catch (error) {
-      console.error('Error generating PDF', error);
-    }
+  downloadPdf(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(url);
   }
 }

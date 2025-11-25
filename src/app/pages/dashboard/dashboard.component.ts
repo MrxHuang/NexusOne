@@ -1,23 +1,19 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthService } from '../../services/auth.service';
+import { UserRole } from '../../models/user.model';
 import { ProjectMetrics, Activity } from '../../models/dashboard.model';
-import { BentoCardComponent } from '../../components/shared/bento-card/bento-card.component';
-import { MetricsCardComponent } from '../../components/dashboard/metrics-card/metrics-card.component';
-import { ActivityTimelineComponent } from '../../components/dashboard/activity-timeline/activity-timeline.component';
-import { StatusChartComponent } from '../../components/dashboard/status-chart/status-chart.component';
-import { LucideAngularModule, Plus, FileText, Folder, CheckCircle, Clock } from 'lucide-angular';
+import { LucideAngularModule, Plus, FileText, Folder, CheckCircle, Clock, Users, BarChart3 } from 'lucide-angular';
+import { formatDistanceToNow, format } from 'date-fns';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule, 
-    BentoCardComponent, 
-    MetricsCardComponent, 
-    ActivityTimelineComponent, 
-    StatusChartComponent,
+    RouterLink,
     LucideAngularModule
   ],
   templateUrl: './dashboard.component.html'
@@ -27,9 +23,11 @@ export class DashboardComponent implements OnInit {
   private authService = inject(AuthService);
 
   currentUser = this.authService.currentUser;
-  metrics = signal<ProjectMetrics | null>(null);
-  recentActivity = signal<Activity[]>([]);
+  dashboardData = signal<any>(null);
   loading = signal(true);
+  
+  // Expose UserRole enum to template
+  UserRole = UserRole;
 
   // Icons
   readonly PlusIcon = Plus;
@@ -37,6 +35,8 @@ export class DashboardComponent implements OnInit {
   readonly FolderIcon = Folder;
   readonly CheckCircleIcon = CheckCircle;
   readonly ClockIcon = Clock;
+  readonly UsersIcon = Users;
+  readonly BarChart3Icon = BarChart3;
 
   ngOnInit() {
     this.loadDashboardData();
@@ -44,15 +44,50 @@ export class DashboardComponent implements OnInit {
 
   loadDashboardData() {
     this.loading.set(true);
-    
-    // In a real app, use forkJoin
-    this.dashboardService.getMetrics().subscribe(data => {
-      this.metrics.set(data);
-    });
+    const userRole = this.currentUser()?.role;
 
-    this.dashboardService.getRecentActivity().subscribe(data => {
-      this.recentActivity.set(data);
-      this.loading.set(false);
-    });
+    // Load role-specific dashboard
+    switch (userRole) {
+      case UserRole.ADMIN:
+        this.dashboardService.getAdminDashboard().subscribe({
+          next: (data) => {
+            this.dashboardData.set(data);
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false)
+        });
+        break;
+
+      case UserRole.EVALUATOR:
+        this.dashboardService.getEvaluatorDashboard().subscribe({
+          next: (data) => {
+            this.dashboardData.set(data);
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false)
+        });
+        break;
+
+      case UserRole.RESEARCHER:
+        this.dashboardService.getResearcherDashboard().subscribe({
+          next: (data) => {
+            this.dashboardData.set(data);
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false)
+        });
+        break;
+
+      default:
+        this.loading.set(false);
+    }
+  }
+
+  formatTime(date: Date | string): string {
+    return formatDistanceToNow(new Date(date), { addSuffix: true });
+  }
+
+  formatDate(date: Date | string): string {
+    return format(new Date(date), 'MMM d, yyyy');
   }
 }

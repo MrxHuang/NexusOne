@@ -1,6 +1,6 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ProjectService } from '../../services/project.service';
 import { Project, ProjectStatus } from '../../models/project.model';
 import { ProjectCardComponent } from '../../components/projects/project-card/project-card.component';
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, ProjectCardComponent, LucideAngularModule, FormsModule],
+  imports: [CommonModule, RouterLink, ProjectCardComponent, LucideAngularModule, FormsModule],
   templateUrl: './projects.component.html'
 })
 export class ProjectsComponent implements OnInit {
@@ -55,9 +55,16 @@ export class ProjectsComponent implements OnInit {
 
   loadProjects() {
     this.loading.set(true);
-    this.projectService.getAllProjects().subscribe(data => {
-      this.projects.set(data);
-      this.loading.set(false);
+    this.projectService.getAllProjects().subscribe({
+      next: (data) => {
+        console.log('Projects loaded:', data);
+        this.projects.set(data);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading projects:', err);
+        this.loading.set(false);
+      }
     });
   }
 

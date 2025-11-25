@@ -1,70 +1,53 @@
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, delay, map } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Project, ProjectStatus, ProjectRole, ProjectVersion } from '../models/project.model';
-import { MockDataService } from './mock-data.service';
-import { User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectService {
-  private mockData = inject(MockDataService);
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/projects`;
 
   getAllProjects(): Observable<Project[]> {
-    return of(this.mockData.getProjects()).pipe(delay(500));
+    return this.http.get<Project[]>(this.apiUrl);
   }
 
-  getProjectById(id: string): Observable<Project | undefined> {
-    return of(this.mockData.getProjects().find(p => p.id === id)).pipe(delay(300));
+  getProjectById(id: string): Observable<Project> {
+    return this.http.get<Project>(`${this.apiUrl}/${id}`);
   }
 
   createProject(project: Partial<Project>): Observable<Project> {
-    const newProject: Project = {
-      ...project,
-      id: `p${Date.now()}`,
-      status: ProjectStatus.DRAFT,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      researchers: [],
-      tags: project.tags || []
-    } as Project;
-    
-    // In a real app, we would push to the array
-    // this.mockData.projects.push(newProject);
-    
-    return of(newProject).pipe(delay(800));
+    return this.http.post<Project>(this.apiUrl, project);
   }
 
   updateProject(id: string, changes: Partial<Project>): Observable<Project> {
-    const project = this.mockData.getProjects().find(p => p.id === id);
-    if (!project) throw new Error('Project not found');
-    
-    const updatedProject = { ...project, ...changes, updatedAt: new Date() };
-    return of(updatedProject).pipe(delay(600));
+    return this.http.put<Project>(`${this.apiUrl}/${id}`, changes);
   }
 
   getProjectsByStatus(status: ProjectStatus): Observable<Project[]> {
-    return this.getAllProjects().pipe(
-      map(projects => projects.filter(p => p.status === status))
-    );
+    return this.http.get<Project[]>(`${this.apiUrl}?status=${status}`);
   }
 
-  assignResearcher(projectId: string, userId: string, role: ProjectRole): Observable<boolean> {
-    return of(true).pipe(delay(500));
+  assignResearcher(projectId: string, userId: string, role: ProjectRole): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${projectId}/researchers`, { userId, role });
+  }
+
+  removeResearcher(projectId: string, userId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${projectId}/researchers/${userId}`);
   }
 
   getProjectVersions(projectId: string): Observable<ProjectVersion[]> {
-    // Mock versions
-    const versions: ProjectVersion[] = [
-      {
-        id: 'v1',
-        projectId,
-        versionNumber: '1.0',
-        changes: 'Initial project creation',
-        modifiedBy: 'u1',
-        modifiedAt: new Date()
-      }
-    ];
-    return of(versions).pipe(delay(400));
+    return this.http.get<ProjectVersion[]>(`${this.apiUrl}/${projectId}/versions`);
+  }
+
+  getMyProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.apiUrl}/my`);
+  }
+
+  deleteProject(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

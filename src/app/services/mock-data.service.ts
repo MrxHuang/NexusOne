@@ -106,6 +106,11 @@ export class MockDataService {
       id: 'e1',
       projectId: 'p2',
       evaluatorId: 'u1',
+      evaluator: {
+        id: 'u1',
+        name: 'Dr. Elena Rodriguez',
+        email: 'elena@university.edu'
+      },
       scores: [
         { criteriaId: 'innovation', score: 9, comment: 'Very innovative approach' },
         { criteriaId: 'methodology', score: 8 },

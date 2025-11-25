@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/user.model';
 import { LucideAngularModule, LogIn, User, Shield, BookOpen, Eye, EyeOff } from 'lucide-angular';
@@ -9,7 +9,7 @@ import { LucideAngularModule, LogIn, User, Shield, BookOpen, Eye, EyeOff } from 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule, RouterLink],
   templateUrl: './login.component.html',
   styles: []
 })
@@ -31,8 +31,8 @@ export class LoginComponent {
   showPassword = signal(false);
   
   loginForm = this.fb.group({
-    email: ['elena@university.edu', [Validators.required, Validators.email]],
-    password: ['password', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
     role: [UserRole.RESEARCHER, [Validators.required]]
   });
 
@@ -50,7 +50,7 @@ export class LoginComponent {
 
     const { email, password, role } = this.loginForm.value;
 
-    this.authService.login(email!, role as UserRole).subscribe({
+    this.authService.login(email!, password!, role as UserRole).subscribe({
       next: () => {
         this.isLoading.set(false);
       },

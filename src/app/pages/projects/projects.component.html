@@ -1,65 +1,81 @@
 <div class="space-y-6">
-  
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
     <div>
       <h1 class="text-2xl font-bold text-slate-900">Projects</h1>
       <p class="text-slate-500">Manage and track all research initiatives.</p>
     </div>
-    <button class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+    <button
+      [routerLink]="['/projects/new']"
+      class="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200"
+    >
       <lucide-icon [img]="PlusIcon" class="w-4 h-4"></lucide-icon>
       <span>New Project</span>
     </button>
   </div>
 
   <!-- Filters -->
-  <div class="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-fade-in">
-    
+  <div
+    class="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm animate-fade-in"
+  >
     <!-- Search -->
     <div class="flex-1 relative">
-      <lucide-icon [img]="SearchIcon" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></lucide-icon>
-      <input type="text" 
-             [ngModel]="searchTerm()" 
-             (ngModelChange)="searchTerm.set($event)"
-             placeholder="Search projects..." 
-             class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm">
+      <lucide-icon
+        [img]="SearchIcon"
+        class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
+      ></lucide-icon>
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+        placeholder="Search projects..."
+        class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm"
+      />
     </div>
 
     <!-- Status Filter -->
     <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
-      <button (click)="setStatusFilter('ALL')"
-              [class.bg-slate-800]="statusFilter() === 'ALL'"
-              [class.text-white]="statusFilter() === 'ALL'"
-              [class.bg-slate-100]="statusFilter() !== 'ALL'"
-              [class.text-slate-600]="statusFilter() !== 'ALL'"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+      <button
+        (click)="setStatusFilter('ALL')"
+        [class.bg-slate-800]="statusFilter() === 'ALL'"
+        [class.text-white]="statusFilter() === 'ALL'"
+        [class.bg-slate-100]="statusFilter() !== 'ALL'"
+        [class.text-slate-600]="statusFilter() !== 'ALL'"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+      >
         All
       </button>
-      
-      <button (click)="setStatusFilter(ProjectStatus.ACTIVE)"
-              [class.bg-cyan-600]="statusFilter() === ProjectStatus.ACTIVE"
-              [class.text-white]="statusFilter() === ProjectStatus.ACTIVE"
-              [class.bg-cyan-50]="statusFilter() !== ProjectStatus.ACTIVE"
-              [class.text-cyan-700]="statusFilter() !== ProjectStatus.ACTIVE"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+
+      <button
+        (click)="setStatusFilter(ProjectStatus.ACTIVE)"
+        [class.bg-cyan-600]="statusFilter() === ProjectStatus.ACTIVE"
+        [class.text-white]="statusFilter() === ProjectStatus.ACTIVE"
+        [class.bg-cyan-50]="statusFilter() !== ProjectStatus.ACTIVE"
+        [class.text-cyan-700]="statusFilter() !== ProjectStatus.ACTIVE"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+      >
         Active
       </button>
 
-      <button (click)="setStatusFilter(ProjectStatus.IN_REVIEW)"
-              [class.bg-violet-600]="statusFilter() === ProjectStatus.IN_REVIEW"
-              [class.text-white]="statusFilter() === ProjectStatus.IN_REVIEW"
-              [class.bg-violet-50]="statusFilter() !== ProjectStatus.IN_REVIEW"
-              [class.text-violet-700]="statusFilter() !== ProjectStatus.IN_REVIEW"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+      <button
+        (click)="setStatusFilter(ProjectStatus.IN_REVIEW)"
+        [class.bg-violet-600]="statusFilter() === ProjectStatus.IN_REVIEW"
+        [class.text-white]="statusFilter() === ProjectStatus.IN_REVIEW"
+        [class.bg-violet-50]="statusFilter() !== ProjectStatus.IN_REVIEW"
+        [class.text-violet-700]="statusFilter() !== ProjectStatus.IN_REVIEW"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+      >
         In Review
       </button>
 
-      <button (click)="setStatusFilter(ProjectStatus.COMPLETED)"
-              [class.bg-green-600]="statusFilter() === ProjectStatus.COMPLETED"
-              [class.text-white]="statusFilter() === ProjectStatus.COMPLETED"
-              [class.bg-green-50]="statusFilter() !== ProjectStatus.COMPLETED"
-              [class.text-green-700]="statusFilter() !== ProjectStatus.COMPLETED"
-              class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors">
+      <button
+        (click)="setStatusFilter(ProjectStatus.COMPLETED)"
+        [class.bg-green-600]="statusFilter() === ProjectStatus.COMPLETED"
+        [class.text-white]="statusFilter() === ProjectStatus.COMPLETED"
+        [class.bg-green-50]="statusFilter() !== ProjectStatus.COMPLETED"
+        [class.text-green-700]="statusFilter() !== ProjectStatus.COMPLETED"
+        class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors"
+      >
         Completed
       </button>
     </div>
@@ -67,10 +83,12 @@
 
   <!-- Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-    <app-project-card *ngFor="let project of filteredProjects()" 
-                      [project]="project"
-                      (cardClick)="onProjectClick($event)"
-                      class="animate-scale-in">
+    <app-project-card
+      *ngFor="let project of filteredProjects()"
+      [project]="project"
+      (cardClick)="onProjectClick($event)"
+      class="animate-scale-in"
+    >
     </app-project-card>
   </div>
 

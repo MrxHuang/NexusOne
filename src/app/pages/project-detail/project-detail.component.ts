@@ -1,12 +1,13 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProjectService } from '../../services/project.service';
 import { Project, ProjectStatus } from '../../models/project.model';
 import { StatusBadgeComponent } from '../../components/shared/status-badge/status-badge.component';
 import { TimelineViewComponent } from '../../components/projects/timeline-view/timeline-view.component';
 import { VersionHistoryComponent } from '../../components/projects/version-history/version-history.component';
 import { TeamManagementComponent } from '../../components/projects/team-management/team-management.component';
+import { EvaluationListComponent } from '../../components/projects/evaluation-list/evaluation-list.component';
 import { LucideAngularModule, ArrowLeft, Calendar, Edit, FileText, Download } from 'lucide-angular';
 import { PdfService } from '../../services/pdf.service';
 import { format } from 'date-fns';
@@ -15,11 +16,13 @@ import { format } from 'date-fns';
   selector: 'app-project-detail',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
+    RouterModule,
     StatusBadgeComponent, 
     TimelineViewComponent, 
     VersionHistoryComponent,
     TeamManagementComponent,
+    EvaluationListComponent,
     LucideAngularModule
   ],
   templateUrl: './project-detail.component.html'
@@ -32,6 +35,7 @@ export class ProjectDetailComponent implements OnInit {
 
   project = signal<Project | undefined>(undefined);
   loading = signal(true);
+  exportingPdf = signal(false);
   activeTab = signal<'overview' | 'team' | 'evaluations' | 'versions'>('overview');
 
   // Icons
@@ -71,7 +75,17 @@ export class ProjectDetailComponent implements OnInit {
   async exportPdf() {
     const p = this.project();
     if (p) {
-      await this.pdfService.generateProjectReport(p, 'project-content');
+      this.exportingPdf.set(true);
+      this.pdfService.generateProjectReport(p.id).subscribe({
+        next: (blob) => {
+          this.pdfService.downloadPdf(blob, `${p.title}-report.pdf`);
+          this.exportingPdf.set(false);
+        },
+        error: () => {
+          this.exportingPdf.set(false);
+          // Handle error (could add toast notification here)
+        }
+      });
     }
   }
 }
