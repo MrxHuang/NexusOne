@@ -35,12 +35,15 @@ export interface Project {
   title: string;
   description: string;
   objectives: string;
+  notes?: string;
+  methodology?: string;
   startDate: Date;
   endDate: Date;
   status: ProjectStatus;
   budget?: number;
   researchers: ProjectResearcher[];
   tags: string[];
+  attachments?: string[];
   createdAt: Date;
   updatedAt: Date;
   createdBy: string; // User ID

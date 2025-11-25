@@ -31,20 +31,75 @@
       (ngSubmit)="onSubmit()"
       class="bg-white rounded-2xl shadow-xl shadow-slate-200 overflow-hidden border border-slate-100"
     >
-      <!-- Progress/Steps Indicator (Visual only for now) -->
+      <!-- Stepper -->
       <div
-        class="bg-slate-50 border-b border-slate-200 px-8 py-4 flex items-center gap-2 text-sm font-medium text-slate-500"
+        class="bg-slate-50 border-b border-slate-200 px-8 py-4 flex items-center justify-between text-sm font-medium text-slate-500"
       >
-        <span class="text-indigo-600">Project Details</span>
-        <span class="text-slate-300">/</span>
-        <span>Timeline & Budget</span>
-        <span class="text-slate-300">/</span>
-        <span>Review</span>
+        <div class="flex items-center gap-4">
+          <button
+            type="button"
+            class="flex items-center gap-2"
+            [class.text-indigo-600]="currentStep() === 1"
+            (click)="goToStep(1)"
+          >
+            <span
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+              [class.bg-indigo-600]="currentStep() === 1"
+              [class.text-white]="currentStep() === 1"
+              [class.bg-slate-200]="currentStep() !== 1"
+            >
+              1
+            </span>
+            <span>Basics</span>
+          </button>
+
+          <div class="h-px w-10 bg-slate-200"></div>
+
+          <button
+            type="button"
+            class="flex items-center gap-2"
+            [class.text-indigo-600]="currentStep() === 2"
+            (click)="goToStep(2)"
+          >
+            <span
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+              [class.bg-indigo-600]="currentStep() === 2"
+              [class.text-white]="currentStep() === 2"
+              [class.bg-slate-200]="currentStep() !== 2"
+            >
+              2
+            </span>
+            <span>Details</span>
+          </button>
+
+          <div class="h-px w-10 bg-slate-200"></div>
+
+          <button
+            type="button"
+            class="flex items-center gap-2"
+            [class.text-indigo-600]="currentStep() === 3"
+            (click)="goToStep(3)"
+          >
+            <span
+              class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold"
+              [class.bg-indigo-600]="currentStep() === 3"
+              [class.text-white]="currentStep() === 3"
+              [class.bg-slate-200]="currentStep() !== 3"
+            >
+              3
+            </span>
+            <span>Timeline & Tags</span>
+          </button>
+        </div>
+
+        <div class="text-xs text-slate-400">
+          Step {{ currentStep() }} of 3
+        </div>
       </div>
 
       <div class="p-8 space-y-8">
-        <!-- Section: Basic Info -->
-        <div class="space-y-6">
+        <!-- STEP 1: Basic Info -->
+        <div *ngIf="currentStep() === 1" class="space-y-6 animate-fade-in">
           <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2">
             Basic Information
           </h3>
@@ -106,8 +161,60 @@
           </div>
         </div>
 
-        <!-- Section: Timeline & Budget -->
-        <div class="space-y-6">
+        <!-- STEP 2: Additional Details -->
+        <div *ngIf="currentStep() === 2" class="space-y-6 animate-fade-in">
+          <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2 pt-4">
+            Additional Details
+          </h3>
+
+          <!-- Notes -->
+          <div class="group">
+            <label
+              class="block text-sm font-medium text-slate-700 mb-1 group-focus-within:text-indigo-600 transition-colors"
+              >Notes / Internal Comments</label
+            >
+            <textarea
+              formControlName="notes"
+              rows="3"
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all placeholder:text-slate-300 resize-none"
+              placeholder="Additional notes, internal comments, etc."
+            ></textarea>
+          </div>
+
+          <!-- Methodology / Details -->
+          <div class="group">
+            <label
+              class="block text-sm font-medium text-slate-700 mb-1 group-focus-within:text-indigo-600 transition-colors"
+              >Methodology / Detailed Plan</label
+            >
+            <textarea
+              formControlName="methodology"
+              rows="4"
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all placeholder:text-slate-300"
+              placeholder="Describe the research methodology, phases, or detailed plan..."
+            ></textarea>
+          </div>
+
+          <!-- Attachments (URLs) -->
+          <div class="group">
+            <label
+              class="block text-sm font-medium text-slate-700 mb-1 group-focus-within:text-indigo-600 transition-colors"
+              >Attachments</label
+            >
+            <input
+              type="text"
+              formControlName="attachments"
+              class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent outline-none transition-all placeholder:text-slate-300"
+              placeholder="Comma separated URLs or file references (e.g., https://..., s3://..., etc.)"
+            />
+            <p class="text-xs text-slate-500 mt-1 ml-1">
+              You can paste links to documents, drive folders, etc. Separate multiple items with commas.
+            </p>
+          </div>
+        </div>
+
+        <!-- STEP 3: Timeline, Budget & Tags -->
+        <div *ngIf="currentStep() === 3" class="space-y-6 animate-fade-in">
           <h3 class="text-lg font-semibold text-slate-900 border-b border-slate-100 pb-2 pt-4">
             Timeline & Resources
           </h3>
@@ -243,48 +350,70 @@
         </div>
       </div>
 
-      <!-- Actions -->
+      <!-- Actions / Navigation -->
       <div
-        class="bg-slate-50 px-8 py-6 flex items-center justify-end gap-4 border-t border-slate-200"
+        class="bg-slate-50 px-8 py-6 flex items-center justify-between gap-4 border-t border-slate-200"
       >
         <button
           type="button"
           (click)="onCancel()"
-          class="px-6 py-2.5 rounded-xl text-slate-600 font-medium hover:bg-slate-200 transition-colors"
+          class="px-4 py-2 rounded-xl text-slate-600 font-medium hover:bg-slate-200 transition-colors"
         >
           Cancel
         </button>
-        <button
-          type="submit"
-          [disabled]="isLoading()"
-          class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
-        >
-          <lucide-icon *ngIf="!isLoading()" [img]="SaveIcon" class="w-5 h-5"></lucide-icon>
-          <svg
-            *ngIf="isLoading()"
-            class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
+
+        <div class="flex items-center gap-3">
+          <button
+            type="button"
+            (click)="prevStep()"
+            [disabled]="currentStep() === 1"
+            class="px-4 py-2 rounded-xl text-slate-600 font-medium hover:bg-slate-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          {{
-            isLoading() ? 'Saving Project...' : isEditing() ? 'Update Project' : 'Create Project'
-          }}
-        </button>
+            Previous
+          </button>
+
+          <button
+            *ngIf="currentStep() < 3"
+            type="button"
+            (click)="nextStep()"
+            class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 flex items-center gap-2"
+          >
+            Next
+          </button>
+
+          <button
+            *ngIf="currentStep() === 3"
+            type="submit"
+            [disabled]="isLoading()"
+            class="px-6 py-2 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            <lucide-icon *ngIf="!isLoading()" [img]="SaveIcon" class="w-5 h-5"></lucide-icon>
+            <svg
+              *ngIf="isLoading()"
+              class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            {{
+              isLoading() ? 'Saving Project...' : isEditing() ? 'Update Project' : 'Create Project'
+            }}
+          </button>
+        </div>
       </div>
     </form>
   </div>

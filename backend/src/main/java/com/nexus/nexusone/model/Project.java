@@ -39,6 +39,12 @@ public class Project {
     @Column(columnDefinition = "TEXT")
     private String objectives;
 
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
+    @Column(columnDefinition = "TEXT")
+    private String methodology;
+
     @NotNull(message = "Start date is required")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -58,6 +64,11 @@ public class Project {
     @CollectionTable(name = "project_tags", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "tag")
     private List<String> tags = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "project_attachments", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "attachment_url")
+    private List<String> attachments = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)

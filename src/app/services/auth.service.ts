@@ -48,6 +48,8 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, loginRequest).pipe(
       tap(response => {
         if (response && response.token) {
+          // Normalize role from backend to ensure it matches UserRole enum
+          response.user.role = this.normalizeRole(response.user.role as any);
           this.currentUser.set(response.user);
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('token', response.token);
@@ -83,6 +85,8 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/register`, request).pipe(
       tap(response => {
         if (response && response.token) {
+          // Normalize role from backend to ensure it matches UserRole enum
+          response.user.role = this.normalizeRole(response.user.role as any);
           this.currentUser.set(response.user);
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('token', response.token);
@@ -127,6 +131,8 @@ export class AuthService {
 
     return this.http.get<User>(`${environment.apiUrl}/users/${userId}`).pipe(
       tap(user => {
+        // Normalize role from backend to ensure it matches UserRole enum
+        user.role = this.normalizeRole(user.role as any);
         this.currentUser.set(user);
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('currentUser', JSON.stringify(user));
@@ -142,6 +148,34 @@ export class AuthService {
   hasRole(allowedRoles: UserRole[]): boolean {
     const user = this.currentUser();
     return user ? allowedRoles.includes(user.role) : false;
+  }
+
+  private normalizeRole(rawRole: string): UserRole {
+    if (!rawRole) {
+      return UserRole.RESEARCHER;
+    }
+
+    const value = rawRole.toString().trim().toUpperCase();
+
+    if (value === 'ADMIN' || value.includes('ADMIN')) {
+      return UserRole.ADMIN;
+    }
+
+    if (value === 'EVALUATOR' || value === 'EVALUADOR' || value.includes('EVAL')) {
+      return UserRole.EVALUATOR;
+    }
+
+    if (
+      value === 'RESEARCHER' ||
+      value === 'RESEARCH' ||
+      value === 'INVESTIGADOR' ||
+      value.includes('RESEARCH') ||
+      value.includes('INVESTIG')
+    ) {
+      return UserRole.RESEARCHER;
+    }
+
+    return UserRole.RESEARCHER;
   }
 
   private loadUserFromStorage(): User | null {

@@ -18,9 +18,6 @@ public class DashboardController {
     @Autowired
     private DashboardService dashboardService;
 
-    @Autowired
-    private com.nexus.nexusone.repository.UserRepository userRepository;
-
     // Role-specific dashboard endpoints
     @GetMapping("/admin")
     public ResponseEntity<Map<String, Object>> getAdminDashboard() {
@@ -30,26 +27,16 @@ public class DashboardController {
 
     @GetMapping("/evaluator")
     public ResponseEntity<Map<String, Object>> getEvaluatorDashboard(Authentication authentication) {
-        String userEmail = authentication.getName();
-        // Get user ID from email
-        return userRepository.findByEmail(userEmail)
-                .map(user -> {
-                    Map<String, Object> dashboard = dashboardService.getEvaluatorDashboard(user.getId().toString());
-                    return ResponseEntity.ok(dashboard);
-                })
-                .orElse(ResponseEntity.status(401).build());
+        Long userId = (Long) authentication.getPrincipal();
+        Map<String, Object> dashboard = dashboardService.getEvaluatorDashboard(userId.toString());
+        return ResponseEntity.ok(dashboard);
     }
 
     @GetMapping("/researcher")
     public ResponseEntity<Map<String, Object>> getResearcherDashboard(Authentication authentication) {
-        String userEmail = authentication.getName();
-        // Get user ID from email
-        return userRepository.findByEmail(userEmail)
-                .map(user -> {
-                    Map<String, Object> dashboard = dashboardService.getResearcherDashboard(user.getId().toString());
-                    return ResponseEntity.ok(dashboard);
-                })
-                .orElse(ResponseEntity.status(401).build());
+        Long userId = (Long) authentication.getPrincipal();
+        Map<String, Object> dashboard = dashboardService.getResearcherDashboard(userId.toString());
+        return ResponseEntity.ok(dashboard);
     }
 
     // Legacy endpoints for backward compatibility

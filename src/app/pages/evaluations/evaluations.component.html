@@ -25,8 +25,12 @@
         <tbody class="divide-y divide-slate-100">
           <tr *ngFor="let evaluation of evaluations()" class="hover:bg-slate-50 transition-colors">
             <td class="px-6 py-4">
-              <div class="font-medium text-slate-900">Project ID: {{ evaluation.projectId }}</div>
-              <div class="text-xs text-slate-500 mt-0.5">Assigned to you</div>
+              <div class="font-medium text-slate-900">
+                {{ evaluation.projectTitle || ('Project ID: ' + evaluation.projectId) }}
+              </div>
+              <div class="text-xs text-slate-500 mt-0.5">
+                Assigned to you
+              </div>
             </td>
             <td class="px-6 py-4">
               <span

@@ -14,6 +14,7 @@ export interface EvaluationScore {
 export interface Evaluation {
   id: string;
   projectId: string;
+  projectTitle?: string;
   evaluatorId: string;
   evaluator: { id: string; name: string; email: string }; // Simplified User object or full User
   scores: EvaluationScore[];

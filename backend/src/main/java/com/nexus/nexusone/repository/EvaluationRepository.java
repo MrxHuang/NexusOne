@@ -9,8 +9,8 @@ import java.util.List;
 
 @Repository
 public interface EvaluationRepository extends JpaRepository<Evaluation, Long> {
-    List<Evaluation> findByProjectId(Long projectId);
-    List<Evaluation> findByEvaluatorId(Long evaluatorId);
+    List<Evaluation> findByProject_Id(Long projectId);
+    List<Evaluation> findByEvaluator_Id(Long evaluatorId);
     List<Evaluation> findByStatus(EvaluationStatus status);
-    List<Evaluation> findByProjectIdAndStatus(Long projectId, EvaluationStatus status);
+    List<Evaluation> findByProject_IdAndStatus(Long projectId, EvaluationStatus status);
 }

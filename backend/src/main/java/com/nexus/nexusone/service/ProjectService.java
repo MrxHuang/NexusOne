@@ -4,6 +4,7 @@ import com.nexus.nexusone.dto.AssignResearcherRequest;
 import com.nexus.nexusone.model.*;
 import com.nexus.nexusone.model.enums.ActivityType;
 import com.nexus.nexusone.model.enums.ProjectStatus;
+import com.nexus.nexusone.model.enums.ProjectRole;
 import com.nexus.nexusone.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -40,6 +41,13 @@ public class ProjectService {
         project.setCreatedBy(creator);
         project.setStatus(ProjectStatus.DRAFT);
         Project savedProject = projectRepository.save(project);
+
+        // Automatically register creator as principal investigator on the project
+        ProjectResearcher creatorLink = new ProjectResearcher();
+        creatorLink.setProject(savedProject);
+        creatorLink.setUser(creator);
+        creatorLink.setRole(ProjectRole.PRINCIPAL_INVESTIGATOR);
+        researcherRepository.save(creatorLink);
 
         // Create initial version
         ProjectVersion version = new ProjectVersion();

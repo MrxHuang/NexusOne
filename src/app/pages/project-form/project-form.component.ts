@@ -31,16 +31,20 @@ export class ProjectFormComponent implements OnInit {
   isLoading = signal(false);
   projectId = signal<string | null>(null);
   error = signal<string | null>(null);
+  currentStep = signal<1 | 2 | 3>(1);
 
   projectForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(5)]],
     description: ['', [Validators.required, Validators.minLength(10)]],
     objectives: ['', [Validators.required]],
+    notes: [''],
+    methodology: [''],
     startDate: ['', [Validators.required]],
     endDate: ['', [Validators.required]],
     status: [ProjectStatus.DRAFT, [Validators.required]],
     budget: [0, [Validators.min(0)]],
-    tags: ['']
+    tags: [''],
+    attachments: ['']
   });
 
   statuses = Object.values(ProjectStatus);
@@ -55,6 +59,40 @@ export class ProjectFormComponent implements OnInit {
     });
   }
 
+  goToStep(step: 1 | 2 | 3) {
+    this.currentStep.set(step);
+  }
+
+  nextStep() {
+    const step = this.currentStep();
+
+    // Basic per-step validation
+    if (step === 1) {
+      const controls = ['title', 'description', 'objectives'] as const;
+      controls.forEach((c) => this.projectForm.get(c)?.markAsTouched());
+      if (controls.some((c) => this.projectForm.get(c)?.invalid)) {
+        this.error.set('Please complete the basic project information.');
+        return;
+      }
+    }
+
+    if (step === 3) {
+      return;
+    }
+
+    this.error.set(null);
+    this.currentStep.set((step + 1) as 1 | 2 | 3);
+  }
+
+  prevStep() {
+    const step = this.currentStep();
+    if (step === 1) {
+      return;
+    }
+    this.error.set(null);
+    this.currentStep.set((step - 1) as 1 | 2 | 3);
+  }
+
   loadProject(id: string) {
     this.isLoading.set(true);
     this.projectService.getProjectById(id).subscribe({
@@ -63,11 +101,14 @@ export class ProjectFormComponent implements OnInit {
           title: project.title,
           description: project.description,
           objectives: project.objectives,
+          notes: project.notes || '',
+          methodology: project.methodology || '',
           startDate: new Date(project.startDate).toISOString().split('T')[0],
           endDate: new Date(project.endDate).toISOString().split('T')[0],
           status: project.status,
           budget: project.budget,
-          tags: project.tags.join(', ')
+          tags: project.tags.join(', '),
+          attachments: (project.attachments || []).join(', ')
         });
         this.isLoading.set(false);
       },
@@ -90,7 +131,13 @@ export class ProjectFormComponent implements OnInit {
     const formValue = this.projectForm.value;
     const projectData: any = {
       ...formValue,
-      tags: formValue.tags ? formValue.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t) : []
+      tags: formValue.tags ? formValue.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t) : [],
+      attachments: formValue.attachments
+        ? formValue.attachments
+            .split(',')
+            .map((t: string) => t.trim())
+            .filter((t: string) => t)
+        : []
     };
 
     if (this.isEditing()) {

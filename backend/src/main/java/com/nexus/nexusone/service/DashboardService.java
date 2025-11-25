@@ -87,7 +87,7 @@ public class DashboardService {
                 Long userIdLong = Long.parseLong(userId);
 
                 // My evaluations
-                List<Evaluation> myEvaluations = evaluationRepository.findByEvaluatorId(userIdLong);
+                List<Evaluation> myEvaluations = evaluationRepository.findByEvaluator_Id(userIdLong);
 
                 long pendingCount = myEvaluations.stream()
                                 .filter(e -> e.getStatus() == EvaluationStatus.PENDING)
@@ -218,7 +218,7 @@ public class DashboardService {
                 long myProjects = researcherRepository.findByUserId(userId).size();
                 metrics.put("myProjectsCount", myProjects);
 
-                long pendingEvaluations = evaluationRepository.findByEvaluatorId(userId).stream()
+                long pendingEvaluations = evaluationRepository.findByEvaluator_Id(userId).stream()
                                 .filter(e -> e.getStatus() == EvaluationStatus.PENDING)
                                 .count();
                 metrics.put("pendingEvaluations", pendingEvaluations);
@@ -236,7 +236,7 @@ public class DashboardService {
                 Map<String, Object> stats = new HashMap<>();
 
                 long projectsInvolved = researcherRepository.findByUserId(userId).size();
-                long evaluationsCompleted = evaluationRepository.findByEvaluatorId(userId).stream()
+                long evaluationsCompleted = evaluationRepository.findByEvaluator_Id(userId).stream()
                                 .filter(e -> e.getStatus() == EvaluationStatus.COMPLETED)
                                 .count();
 

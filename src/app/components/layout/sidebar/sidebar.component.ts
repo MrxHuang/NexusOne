@@ -19,16 +19,17 @@ import { LucideAngularModule, LayoutDashboard, FolderKanban, FileText, Users, Se
         <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-600/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2"></div>
       </div>
 
-      <!-- Logo -->
-      <div class="h-16 flex items-center justify-center border-b border-slate-800 relative z-10">
-        <div class="flex items-center gap-2" [class.justify-center]="isCollapsed()">
+      <!-- Logo & Collapse Toggle -->
+      <div class="h-16 flex items-center border-b border-slate-800 relative z-10 px-3">
+        <div class="flex items-center gap-2">
           <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/30">N</div>
           <span *ngIf="!isCollapsed()" class="font-bold text-xl text-white animate-fade-in tracking-tight">Nexus<span class="text-indigo-400">One</span></span>
         </div>
         
         <button (click)="toggleCollapse()" 
-                class="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-[#0f172a] border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:border-indigo-500 transition-all shadow-sm z-30">
-          <lucide-icon [img]="isCollapsed() ? ChevronRightIcon : ChevronLeftIcon" class="w-3 h-3"></lucide-icon>
+                class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-slate-900/90 border border-slate-600 rounded-full flex items-center justify-center text-slate-300 hover:text-white hover:border-indigo-500 hover:bg-slate-900 transition-all shadow-md z-30"
+                title="Toggle sidebar">
+          <lucide-icon [img]="isCollapsed() ? ChevronRightIcon : ChevronLeftIcon" class="w-4 h-4"></lucide-icon>
         </button>
       </div>
 
@@ -95,7 +96,6 @@ export class SidebarComponent {
 
     if (role === UserRole.ADMIN) {
       items.push({ label: 'Team', path: '/team', icon: Users });
-      items.push({ label: 'Settings', path: '/settings', icon: Settings });
     }
 
     return items;

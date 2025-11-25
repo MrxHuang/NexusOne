@@ -58,4 +58,9 @@ public class Evaluation {
     public Long getEvaluatorId() {
         return evaluator != null ? evaluator.getId() : null;
     }
+
+    @JsonProperty("projectTitle")
+    public String getProjectTitle() {
+        return project != null ? project.getTitle() : null;
+    }
 }

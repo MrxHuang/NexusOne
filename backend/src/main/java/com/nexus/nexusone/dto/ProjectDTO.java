@@ -20,11 +20,14 @@ public class ProjectDTO {
     private String title;
     private String description;
     private String objectives;
+    private String notes;
+    private String methodology;
     private LocalDate startDate;
     private LocalDate endDate;
     private ProjectStatus status;
     private BigDecimal budget;
     private List<String> tags;
+    private List<String> attachments;
     private Long createdBy; // Just the ID
     private List<ProjectResearcherDTO> researchers;
     private LocalDateTime createdAt;
@@ -36,16 +39,21 @@ public class ProjectDTO {
         dto.setTitle(project.getTitle());
         dto.setDescription(project.getDescription());
         dto.setObjectives(project.getObjectives());
+        dto.setNotes(project.getNotes());
+        dto.setMethodology(project.getMethodology());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
         dto.setBudget(project.getBudget());
         dto.setTags(project.getTags());
+        dto.setAttachments(project.getAttachments());
         dto.setCreatedBy(project.getCreatedBy() != null ? project.getCreatedBy().getId() : null);
         dto.setResearchers(
-                project.getResearchers().stream()
-                        .map(ProjectResearcherDTO::fromEntity)
-                        .collect(Collectors.toList()));
+                project.getResearchers() == null
+                        ? List.of()
+                        : project.getResearchers().stream()
+                                .map(ProjectResearcherDTO::fromEntity)
+                                .collect(Collectors.toList()));
         dto.setCreatedAt(project.getCreatedAt());
         dto.setUpdatedAt(project.getUpdatedAt());
         return dto;

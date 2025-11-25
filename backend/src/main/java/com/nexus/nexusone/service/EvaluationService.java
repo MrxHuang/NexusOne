@@ -64,12 +64,12 @@ public class EvaluationService {
 
     @Transactional(readOnly = true)
     public List<Evaluation> getEvaluationsByProject(Long projectId) {
-        return evaluationRepository.findByProjectId(projectId);
+        return evaluationRepository.findByProject_Id(projectId);
     }
 
     @Transactional(readOnly = true)
     public List<Evaluation> getMyEvaluations(Long evaluatorId) {
-        return evaluationRepository.findByEvaluatorId(evaluatorId);
+        return evaluationRepository.findByEvaluator_Id(evaluatorId);
     }
 
     @Transactional(readOnly = true)
@@ -79,7 +79,7 @@ public class EvaluationService {
 
     @Transactional(readOnly = true)
     public Map<String, Object> getEvaluationResults(Long projectId) {
-        List<Evaluation> evaluations = evaluationRepository.findByProjectIdAndStatus(
+        List<Evaluation> evaluations = evaluationRepository.findByProject_IdAndStatus(
                 projectId, EvaluationStatus.COMPLETED);
 
         if (evaluations.isEmpty()) {

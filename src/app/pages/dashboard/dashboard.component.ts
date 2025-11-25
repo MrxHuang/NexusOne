@@ -46,15 +46,22 @@ export class DashboardComponent implements OnInit {
     this.loading.set(true);
     const userRole = this.currentUser()?.role;
 
+    console.log('[Dashboard] Loading dashboard for user:', this.currentUser(), 'role:', userRole);
+
     // Load role-specific dashboard
     switch (userRole) {
       case UserRole.ADMIN:
         this.dashboardService.getAdminDashboard().subscribe({
           next: (data) => {
             this.dashboardData.set(data);
+            console.log('[Dashboard] Admin dashboard data loaded:', data);
             this.loading.set(false);
           },
-          error: () => this.loading.set(false)
+          error: (error) => {
+            console.error('[Dashboard] Error loading admin dashboard:', error);
+            this.dashboardData.set({});
+            this.loading.set(false);
+          }
         });
         break;
 
@@ -62,9 +69,14 @@ export class DashboardComponent implements OnInit {
         this.dashboardService.getEvaluatorDashboard().subscribe({
           next: (data) => {
             this.dashboardData.set(data);
+            console.log('[Dashboard] Evaluator dashboard data loaded:', data);
             this.loading.set(false);
           },
-          error: () => this.loading.set(false)
+          error: (error) => {
+            console.error('[Dashboard] Error loading evaluator dashboard:', error);
+            this.dashboardData.set({});
+            this.loading.set(false);
+          }
         });
         break;
 
@@ -72,13 +84,20 @@ export class DashboardComponent implements OnInit {
         this.dashboardService.getResearcherDashboard().subscribe({
           next: (data) => {
             this.dashboardData.set(data);
+            console.log('[Dashboard] Researcher dashboard data loaded:', data);
             this.loading.set(false);
           },
-          error: () => this.loading.set(false)
+          error: (error) => {
+            console.error('[Dashboard] Error loading researcher dashboard:', error);
+            this.dashboardData.set({});
+            this.loading.set(false);
+          }
         });
         break;
 
       default:
+        console.warn('[Dashboard] Unknown or missing user role, cannot load role-specific dashboard:', userRole);
+        this.dashboardData.set({});
         this.loading.set(false);
     }
   }
